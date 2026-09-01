@@ -1,7 +1,0 @@
-# El .env lleva la contraseña de Splunk y el token de HEC.
-.env
-
-# Lo que genera exportar.py
-salida/
-__pycache__/
-*.pyc
