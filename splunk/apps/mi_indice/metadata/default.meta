@@ -1,0 +1,7 @@
+# export = system hace que el índice, el sourcetype y los campos se vean desde
+# cualquier app, no solo desde esta. Sin esto, al buscar desde "Search &
+# Reporting" no encontrarías nada y no sabrías por qué.
+
+[]
+access = read : [ * ], write : [ admin, power ]
+export = system
