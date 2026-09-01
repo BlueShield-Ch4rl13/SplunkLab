@@ -1,0 +1,64 @@
+# =============================================================================
+#  VÍA B: tu servicio escribe a FICHEROS, no a stdout
+# =============================================================================
+#  Si tu servicio guarda los logs en ficheros (dentro del contenedor o en un
+#  volumen), el driver de logging no sirve: ese solo recoge lo que sale por
+#  consola. Aquí entra el Universal Forwarder: un agente ligero que lee
+#  ficheros y los manda al puerto 9997 de Splunk.
+#
+#  Cómo se usa:
+#      docker compose -f docker-compose.yml -f docker-compose.ficheros.yml up -d
+#
+#  Qué cambia respecto a la vía A:
+#      - mi-servicio vuelve al driver normal de Docker y escribe a un volumen
+#      - aparece un contenedor nuevo, el forwarder, que lee ese volumen
+#      - los logs entran por el 9997 en vez de por el 8088
+#
+#  Ventaja de esta vía: si Splunk se cae, los ficheros siguen en disco y el
+#  forwarder los recupera al volver. Con HEC, si Splunk no está, se pierden.
+# =============================================================================
+
+services:
+
+  mi-servicio:
+    # Se anula el driver de logging: aquí no queremos mandar el stdout.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    volumes:
+      - ./nginx/nginx-ficheros.conf:/etc/nginx/nginx.conf:ro
+      # El volumen compartido donde el servicio deja sus logs...
+      - logs-servicio:/var/log/mi-servicio
+
+  # ---------------------------------------------------------------------------
+  # EL AGENTE: lee ficheros y los envía. No parsea nada; de eso se encarga el
+  # indexador con lo que hayas puesto en props.conf.
+  # ---------------------------------------------------------------------------
+  universalforwarder:
+    image: splunk/universalforwarder:${SPLUNK_TAG:-latest}
+    container_name: forwarder
+    hostname: forwarder
+    restart: unless-stopped
+    depends_on:
+      splunk:
+        condition: service_healthy
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_ROLE=splunk_universal_forwarder
+      # Le dice a qué Splunk reenviar. Configura el envío al 9997 por su cuenta.
+      - SPLUNK_STANDALONE_URL=splunk
+    volumes:
+      # ...y el forwarder lo lee en SOLO LECTURA: un agente de recolección no
+      # debe poder tocar la evidencia que recoge.
+      - logs-servicio:/var/log/mi-servicio:ro
+      # Qué ficheros vigilar y con qué índice y sourcetype.
+      - ./uf/apps/mi_uf:/opt/splunkforwarder/etc/apps/mi_uf
+      - uf-var:/opt/splunkforwarder/var
+
+volumes:
+  logs-servicio:
+  uf-var:

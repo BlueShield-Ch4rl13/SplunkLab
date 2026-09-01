@@ -1,0 +1,1098 @@
+<title>Del índice al fichero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&family=Source+Code+Pro:wght@400;600&display=swap">
+
+<style>
+/* ── Paleta clara: papel frío, tinta azulada, acento ladrillo ───────────── */
+:root{
+  --fondo:#F5F6F8;
+  --sup:#FFFFFF;
+  --sup-2:#EDEFF3;
+  --tinta:#15181D;
+  --tinta-2:#4A515C;
+  --tinta-3:#7B838F;
+  --linea:#DCE0E6;
+  --linea-fuerte:#C3C9D2;
+
+  --acento:#9B2C3B;
+  --acento-suave:#F6E9EA;
+
+  --ok:#2F6B3D;
+  --aviso:#8A5A12;
+  --aviso-fondo:#FBF2E1;
+  --mal:#A32B24;
+  --mal-fondo:#FAEBEA;
+
+  /* Código */
+  --cod-fondo:#FBFBFC;
+  --cod-linea:#E2E6EC;
+  --cod-txt:#22262D;
+  --cod-cmd:#9B2C3B;
+  --cod-fn:#1C5A85;
+  --cod-str:#456A1F;
+  --cod-pipe:#A67A18;
+  --cod-num:#7A4BA8;
+  --cod-campo:#2B3540;
+  --cod-com:#8A929D;
+
+  --sombra:0 1px 2px rgba(20,26,35,.05), 0 6px 18px -10px rgba(20,26,35,.16);
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --fondo:#101318;
+    --sup:#171B21;
+    --sup-2:#1E232B;
+    --tinta:#E6E9EE;
+    --tinta-2:#A8B0BB;
+    --tinta-3:#79818D;
+    --linea:#2A303A;
+    --linea-fuerte:#3A424E;
+
+    --acento:#F2808E;
+    --acento-suave:#2A1B1F;
+
+    --ok:#7FC98D;
+    --aviso:#E3B45E;
+    --aviso-fondo:#2A2317;
+    --mal:#F08C84;
+    --mal-fondo:#2B1A19;
+
+    --cod-fondo:#13171D;
+    --cod-linea:#262C35;
+    --cod-txt:#D6DBE2;
+    --cod-cmd:#F2808E;
+    --cod-fn:#79C0E8;
+    --cod-str:#AFD273;
+    --cod-pipe:#E0BC63;
+    --cod-num:#C3A0EA;
+    --cod-campo:#C6CCD5;
+    --cod-com:#6E7683;
+
+    --sombra:0 1px 2px rgba(0,0,0,.35), 0 6px 18px -10px rgba(0,0,0,.6);
+  }
+}
+
+:root[data-theme="dark"]{
+  --fondo:#101318;
+  --sup:#171B21;
+  --sup-2:#1E232B;
+  --tinta:#E6E9EE;
+  --tinta-2:#A8B0BB;
+  --tinta-3:#79818D;
+  --linea:#2A303A;
+  --linea-fuerte:#3A424E;
+
+  --acento:#F2808E;
+  --acento-suave:#2A1B1F;
+
+  --ok:#7FC98D;
+  --aviso:#E3B45E;
+  --aviso-fondo:#2A2317;
+  --mal:#F08C84;
+  --mal-fondo:#2B1A19;
+
+  --cod-fondo:#13171D;
+  --cod-linea:#262C35;
+  --cod-txt:#D6DBE2;
+  --cod-cmd:#F2808E;
+  --cod-fn:#79C0E8;
+  --cod-str:#AFD273;
+  --cod-pipe:#E0BC63;
+  --cod-num:#C3A0EA;
+  --cod-campo:#C6CCD5;
+  --cod-com:#6E7683;
+
+  --sombra:0 1px 2px rgba(0,0,0,.35), 0 6px 18px -10px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--fondo);
+  color:var(--tinta);
+  font-family:"Karla","Helvetica Neue",Arial,sans-serif;
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+
+.envoltorio{max-width:1120px;margin:0 auto;padding:0 24px 96px}
+
+/* ── Cabecera ───────────────────────────────────────────────────────────── */
+header.cab{padding:64px 0 40px;border-bottom:1px solid var(--linea)}
+.tubo{
+  font-family:"Source Code Pro",monospace;
+  color:var(--cod-pipe);
+  font-size:13px;letter-spacing:.42em;
+  margin:0 0 18px;
+}
+h1{
+  font-family:"Fraunces","Georgia",serif;
+  font-weight:600;
+  font-size:clamp(2.4rem,6vw,3.9rem);
+  line-height:1.04;
+  letter-spacing:-.02em;
+  margin:0 0 18px;
+  text-wrap:balance;
+}
+h1 em{font-style:normal;color:var(--acento)}
+.entradilla{
+  font-size:1.1rem;color:var(--tinta-2);
+  max-width:60ch;margin:0;
+}
+.meta{
+  margin-top:26px;display:flex;flex-wrap:wrap;gap:10px 22px;
+  font-size:.8rem;color:var(--tinta-3);
+  font-family:"Source Code Pro",monospace;
+}
+.meta span{display:inline-flex;align-items:center;gap:7px}
+.meta span::before{
+  content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--cod-pipe);flex:none;
+}
+
+/* ── Navegación pegajosa ────────────────────────────────────────────────── */
+nav.saltos{
+  position:sticky;top:0;z-index:20;
+  background:var(--fondo);
+  border-bottom:1px solid var(--linea);
+  margin-bottom:8px;
+}
+nav.saltos ol{
+  list-style:none;margin:0;padding:10px 0;
+  display:flex;flex-wrap:wrap;gap:3px 2px;
+}
+nav.saltos a{
+  display:block;white-space:nowrap;
+  font-size:.775rem;font-weight:600;
+  padding:5px 11px;border-radius:5px;
+  color:var(--tinta-2);text-decoration:none;
+  border:1px solid transparent;
+}
+nav.saltos a:hover{color:var(--acento);background:var(--acento-suave)}
+nav.saltos a:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+nav.saltos .n{
+  font-family:"Source Code Pro",monospace;
+  color:var(--cod-pipe);margin-right:6px;
+}
+
+/* ── Secciones: el número cuelga de la tubería ──────────────────────────── */
+section.bloque{
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr);
+  gap:0 28px;
+  padding:52px 0 12px;
+  scroll-margin-top:60px;
+}
+.rail{
+  position:relative;
+  font-family:"Source Code Pro",monospace;
+  font-size:.9rem;font-weight:600;
+  color:var(--cod-pipe);
+  padding-top:6px;
+}
+.rail::after{
+  content:"";position:absolute;left:9px;top:34px;bottom:-52px;
+  width:1px;background:var(--linea);
+}
+section.bloque:last-of-type .rail::after{display:none}
+.cuerpo{min-width:0}
+
+h2{
+  font-family:"Fraunces","Georgia",serif;
+  font-weight:600;font-size:1.72rem;line-height:1.18;
+  letter-spacing:-.012em;margin:0 0 10px;text-wrap:balance;
+}
+h3{
+  font-family:"Karla",sans-serif;
+  font-size:.79rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:var(--tinta-3);
+  margin:34px 0 12px;
+}
+p{margin:0 0 15px;max-width:68ch}
+.cuerpo > p:last-child{margin-bottom:0}
+strong{font-weight:700;color:var(--tinta)}
+a{color:var(--acento)}
+
+code:not(pre code){
+  font-family:"Source Code Pro",monospace;
+  font-size:.855em;
+  background:var(--sup-2);
+  border:1px solid var(--linea);
+  border-radius:4px;padding:.08em .34em;
+  color:var(--cod-campo);
+}
+
+/* ── Bloques de código ──────────────────────────────────────────────────── */
+.cod{margin:0 0 18px}
+.cod .rotulo{
+  display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+  font-size:.82rem;color:var(--tinta-2);margin-bottom:7px;
+}
+.cod .rotulo b{font-weight:600;color:var(--tinta)}
+pre{
+  margin:0;
+  background:var(--cod-fondo);
+  border:1px solid var(--cod-linea);
+  border-left:2px solid var(--cod-pipe);
+  border-radius:7px;
+  padding:15px 17px;
+  overflow-x:auto;
+  font-family:"Source Code Pro",monospace;
+  font-size:.83rem;
+  line-height:1.72;
+  color:var(--cod-txt);
+  tab-size:2;
+}
+pre.sh{border-left-color:var(--cod-fn)}
+pre.ini{border-left-color:var(--cod-str)}
+.t-cmd{color:var(--cod-cmd);font-weight:600}
+.t-fn{color:var(--cod-fn)}
+.t-str{color:var(--cod-str)}
+.t-pipe{color:var(--cod-pipe);font-weight:600}
+.t-num{color:var(--cod-num)}
+.t-campo{color:var(--cod-campo);font-weight:600}
+.t-com{color:var(--cod-com);font-style:italic}
+.t-kw{color:var(--tinta-3);font-weight:600}
+
+.copiar{
+  font-family:"Karla",sans-serif;font-size:.72rem;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;
+  background:none;border:1px solid var(--linea-fuerte);
+  color:var(--tinta-3);border-radius:5px;
+  padding:3px 9px;cursor:pointer;flex:none;
+}
+.copiar:hover{color:var(--acento);border-color:var(--acento)}
+.copiar:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+
+/* ── Avisos ─────────────────────────────────────────────────────────────── */
+.ojo{
+  border-left:3px solid var(--aviso);
+  background:var(--aviso-fondo);
+  border-radius:0 7px 7px 0;
+  padding:14px 18px;margin:0 0 18px;
+}
+.ojo .et{
+  display:block;font-size:.7rem;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;
+  color:var(--aviso);margin-bottom:5px;
+}
+.ojo p{margin:0;max-width:none}
+.ojo p + p{margin-top:9px}
+
+/* ── Bien / mal ─────────────────────────────────────────────────────────── */
+.contraste{display:grid;gap:12px;margin:0 0 18px}
+@media(min-width:760px){.contraste{grid-template-columns:1fr 1fr}}
+.tarjeta{
+  background:var(--sup);border:1px solid var(--linea);
+  border-radius:8px;padding:13px 15px;box-shadow:var(--sombra);
+}
+.tarjeta .marca{
+  display:flex;align-items:center;gap:7px;
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:9px;
+}
+.tarjeta.si .marca{color:var(--ok)}
+.tarjeta.no .marca{color:var(--mal)}
+.tarjeta .marca .punto{width:7px;height:7px;border-radius:50%;flex:none}
+.tarjeta.si .marca .punto{background:var(--ok)}
+.tarjeta.no .marca .punto{background:var(--mal)}
+.tarjeta pre{border-left-width:1px;border-left-color:var(--cod-linea);font-size:.79rem}
+.tarjeta p{font-size:.86rem;color:var(--tinta-2);margin:9px 0 0;max-width:none}
+
+/* ── Tablas ─────────────────────────────────────────────────────────────── */
+.tabla-env{overflow-x:auto;margin:0 0 18px;border:1px solid var(--linea);border-radius:8px;background:var(--sup)}
+table{border-collapse:collapse;width:100%;font-size:.875rem;min-width:520px}
+th,td{text-align:left;padding:10px 15px;border-bottom:1px solid var(--linea);vertical-align:top}
+th{
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tinta-3);background:var(--sup-2);
+}
+tr:last-child td{border-bottom:none}
+td code{white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+
+table.limites td:first-child{font-weight:600}
+table.limites .cifra{
+  font-family:"Source Code Pro",monospace;font-weight:600;
+  color:var(--mal);white-space:nowrap;
+}
+table.limites .arreglo{
+  font-family:"Source Code Pro",monospace;font-weight:600;
+  color:var(--ok);white-space:nowrap;
+}
+
+/* ── Listas ─────────────────────────────────────────────────────────────── */
+ul.puntos{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:9px}
+ul.puntos li{position:relative;padding-left:19px;max-width:68ch}
+ul.puntos li::before{
+  content:"|";position:absolute;left:2px;top:-1px;
+  font-family:"Source Code Pro",monospace;color:var(--cod-pipe);font-weight:600;
+}
+
+/* ── Pie ────────────────────────────────────────────────────────────────── */
+footer.pie{
+  margin-top:64px;padding-top:26px;
+  border-top:1px solid var(--linea);
+  font-size:.85rem;color:var(--tinta-3);
+  display:flex;flex-wrap:wrap;gap:8px 26px;justify-content:space-between;
+}
+footer.pie a{color:var(--tinta-2)}
+
+@media(max-width:700px){
+  section.bloque{grid-template-columns:1fr;gap:0}
+  .rail{padding-top:0;margin-bottom:6px}
+  .rail::after{display:none}
+  header.cab{padding:44px 0 30px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+
+<div class="envoltorio">
+
+<header class="cab">
+  <p class="tubo">| | | | | | | | |</p>
+  <h1>Del índice<br>al <em>fichero</em></h1>
+  <p class="entradilla">Los comandos SPL que de verdad se usan, en el orden en que se usan:
+  primero mirar qué hay, luego filtrar, luego agrupar, y al final sacarlo fuera de Splunk.</p>
+  <div class="meta">
+    <span>índice de ejemplo: mi_servicio</span>
+    <span>Splunk Enterprise 9 y 10</span>
+    <span>los curl están probados</span>
+  </div>
+</header>
+
+<nav class="saltos" aria-label="Secciones">
+  <ol>
+    <li><a href="#s0"><span class="n">0</span>Dónde</a></li>
+    <li><a href="#s1"><span class="n">1</span>Reconocer</a></li>
+    <li><a href="#s2"><span class="n">2</span>Filtrar</a></li>
+    <li><a href="#s3"><span class="n">3</span>Agrupar</a></li>
+    <li><a href="#s4"><span class="n">4</span>Campos</a></li>
+    <li><a href="#s5"><span class="n">5</span>Servicio web</a></li>
+    <li><a href="#s6"><span class="n">6</span>Endpoints</a></li>
+    <li><a href="#s7"><span class="n">7</span>Salud</a></li>
+    <li><a href="#s8"><span class="n">8</span>Exportar</a></li>
+    <li><a href="#s9"><span class="n">9</span>Fallos</a></li>
+  </ol>
+</nav>
+
+<!-- ═══ 0 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s0">
+  <div class="rail">00</div>
+  <div class="cuerpo">
+    <h2>Tres sitios donde escribir SPL</h2>
+    <p>Y una regla que los separa, responsable de la mitad de los "no me devuelve nada".</p>
+
+    <div class="tabla-env">
+      <table>
+        <thead><tr><th>Dónde</th><th>Para qué</th><th>El <code>search</code> inicial</th></tr></thead>
+        <tbody>
+          <tr><td>La barra de búsqueda</td><td>explorar, probar</td><td><strong>implícito</strong>, no lo escribes</td></tr>
+          <tr><td><code>splunk search "…"</code></td><td>scripts en la propia máquina</td><td><strong>implícito</strong>, no lo escribes</td></tr>
+          <tr><td>API REST (<code>curl</code>, Python)</td><td>automatizar desde fuera</td><td><strong>obligatorio</strong>, o falla</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ojo">
+      <span class="et">Ojo</span>
+      <p>Por la API, la búsqueda tiene que empezar por <code>search</code> o por una tubería <code>|</code>.
+      Copias del navegador <code>index=mi_servicio status&gt;=500</code>, lo pegas en un <code>curl</code>,
+      y te devuelve cero resultados. Tiene que ser <code>search index=mi_servicio status&gt;=500</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 1 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s1">
+  <div class="rail">01</div>
+  <div class="cuerpo">
+    <h2>Reconocer: qué hay en este Splunk</h2>
+    <p>Lo primero que haces al sentarte delante de un Splunk que no es tuyo.</p>
+
+    <div class="cod">
+      <div class="rotulo"><b>Qué índices existen y cuánto tienen dentro</b></div>
+      <pre data-spl>| eventcount summarize=false index=* index=_*
+| stats sum(count) AS eventos by index
+| sort - eventos</pre>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Qué sourcetypes hay, y cuándo llegó el último evento</b></div>
+      <pre data-spl>| metadata type=sourcetypes index=mi_servicio
+| eval ultimo=strftime(lastTime, "%d/%m/%Y %H:%M:%S")
+| table sourcetype totalCount ultimo
+| sort - totalCount</pre>
+    </div>
+
+    <p><code>metadata</code> no lee los eventos: lee los metadatos de los buckets. Por eso es
+    instantáneo aunque el índice tenga mil millones de eventos. Igual con <code>type=hosts</code>
+    y <code>type=sources</code>.</p>
+
+    <div class="cod">
+      <div class="rotulo"><b>Qué campos tiene realmente un sourcetype</b></div>
+      <pre data-spl>index=mi_servicio sourcetype=mi_servicio:docker
+| head 1000
+| fieldsummary
+| table field count distinct_count values</pre>
+    </div>
+
+    <p>Esto te dice si tus <code>FIELDALIAS</code> están funcionando. Si ves <code>line.status</code>
+    en vez de <code>status</code>, el alias no se ha aplicado.</p>
+
+    <div class="cod">
+      <div class="rotulo"><b>La configuración del índice, sin salir de la búsqueda</b></div>
+      <pre data-spl>| rest /services/data/indexes
+| table title currentDBSizeMB totalEventCount maxTotalDataSizeMB frozenTimePeriodInSecs
+| sort - currentDBSizeMB</pre>
+    </div>
+
+    <p>El comando <code>rest</code> llama a la API de Splunk desde dentro de SPL: te ahorra
+    abrir la interfaz para comprobar la configuración.</p>
+  </div>
+</section>
+
+<!-- ═══ 2 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s2">
+  <div class="rail">02</div>
+  <div class="cuerpo">
+    <h2>Filtrar: lo que va antes de la primera tubería</h2>
+    <p>Esta es la parte que decide si tu búsqueda tarda dos segundos o cuatro minutos.
+    Todo lo que pongas <strong>antes de la primera <code>|</code></strong> lo resuelve el índice
+    invertido. Todo lo que pongas después obliga a leer eventos.</p>
+
+    <div class="contraste">
+      <div class="tarjeta si">
+        <div class="marca"><span class="punto"></span>El índice hace el trabajo</div>
+        <pre data-spl>index=mi_servicio status&gt;=500
+| stats count by uri</pre>
+        <p>Filtra en el índice invertido y solo lee los eventos que importan.</p>
+      </div>
+      <div class="tarjeta no">
+        <div class="marca"><span class="punto"></span>Lee todo y tira el 99%</div>
+        <pre data-spl>index=mi_servicio
+| where status&gt;=500
+| stats count by uri</pre>
+        <p>Mismo resultado, dos órdenes de magnitud más lento.</p>
+      </div>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Lo que sí se puede poner en el filtro base</b></div>
+      <pre data-spl>index=mi_servicio uri="/login*"                  # comodín
+index=mi_servicio (status=500 OR status=502)     # booleanos, en MAYÚSCULAS
+index=mi_servicio NOT uri="/health"              # negación
+index=mi_servicio remote_addr="10.0.0.0/8"       # CIDR, funciona aquí mismo
+index=mi_servicio status=*                       # el campo existe
+index=mi_servicio earliest=-24h latest=-1h       # ventana de tiempo
+index=mi_servicio earliest="10/25/2026:08:00:00" # fecha concreta, formato US</pre>
+    </div>
+
+    <div class="ojo">
+      <span class="et">Ojo con el CIDR</span>
+      <p><code>remote_addr="10.0.0.0/8"</code> funciona en el filtro base, pero
+      <code>cidrmatch()</code> es una función de <code>eval</code>, y ahí sí necesita
+      <code>| where cidrmatch("10.0.0.0/8", remote_addr)</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 3 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s3">
+  <div class="rail">03</div>
+  <div class="cuerpo">
+    <h2>Contar y agrupar</h2>
+
+    <h3>stats — el que usarás el 80% de las veces</h3>
+    <div class="cod">
+      <pre data-spl>index=mi_servicio
+| stats count AS peticiones,
+        dc(remote_addr) AS ips_distintas,
+        avg(request_time) AS media,
+        max(request_time) AS peor,
+        values(method) AS metodos
+  by contenedor, resultado
+| eval media=round(media*1000, 1)
+| sort - peticiones</pre>
+    </div>
+    <p>Funciones que se repiten: <code>count</code>, <code>dc</code> (distintos), <code>sum</code>,
+    <code>avg</code>, <code>max</code>, <code>min</code>, <code>values</code> (valores únicos),
+    <code>list</code> (todos, con repeticiones), <code>latest</code>, <code>earliest</code>,
+    <code>perc95</code>.</p>
+
+    <h3>timechart — lo mismo, contra el tiempo</h3>
+    <div class="cod">
+      <pre data-spl>index=mi_servicio
+| timechart span=10m count by resultado limit=6</pre>
+    </div>
+    <p><code>span</code> fija el ancho del cubo. Sin él, Splunk lo elige por ti y cambia según el
+    rango, lo que en un dashboard hace que la gráfica se deforme sola. <code>limit=6</code> corta a
+    las seis series mayores y agrupa el resto en <code>OTHER</code>.</p>
+
+    <h3>top y rare — el ranking en una línea</h3>
+    <div class="cod">
+      <pre data-spl>index=mi_servicio | top 10 uri by contenedor
+index=mi_servicio | rare limit=10 user_agent</pre>
+    </div>
+    <p><code>rare</code> es la que importa en un SOC: lo que ocurre una sola vez es casi siempre
+    lo interesante.</p>
+
+    <h3>eventstats — agregar sin perder los eventos</h3>
+    <p><code>stats</code> te deja solo el resumen. <code>eventstats</code> añade el resumen a cada
+    evento, y con eso tienes una detección de anomalías completa en cinco líneas:</p>
+    <div class="cod">
+      <div class="rotulo"><b>Peticiones a más de tres desviaciones típicas de la media</b></div>
+      <pre data-spl>index=mi_servicio request_time=*
+| eventstats avg(request_time) AS media, stdev(request_time) AS desv
+| where request_time &gt; media + 3*desv
+| table _time contenedor uri request_time media</pre>
+    </div>
+
+    <h3>streamstats — acumular según avanza</h3>
+    <div class="cod">
+      <div class="rotulo"><b>IPs con cinco o más fallos seguidos</b></div>
+      <pre data-spl>index=mi_servicio status=401
+| sort 0 _time
+| streamstats count AS intentos by remote_addr
+| where intentos &gt;= 5</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 4 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s4">
+  <div class="rail">04</div>
+  <div class="cuerpo">
+    <h2>Cuando los campos no están</h2>
+
+    <h3>spath — desenvolver un JSON que llegó como cadena</h3>
+    <p>El caso de los ficheros <code>*-json.log</code> de Docker: tu JSON viaja dentro del campo
+    <code>log</code>.</p>
+    <div class="cod">
+      <pre data-spl>index=mi_servicio sourcetype=docker:json
+| spath input=log
+| table _time container_id status uri</pre>
+    </div>
+
+    <h3>rex — sacar campos con una regex, en tiempo de búsqueda</h3>
+    <div class="cod">
+      <pre data-spl>index=mi_servicio tipo=texto
+| rex field=line "(?&lt;nivel&gt;ERROR|WARN|INFO)\s+(?&lt;modulo&gt;\w+):\s+(?&lt;mensaje&gt;.*)"
+| stats count by nivel, modulo</pre>
+    </div>
+    <p><code>rex</code> es el laboratorio: pruebas aquí la regex hasta que funciona, y cuando
+    funciona la mueves a <code>props.conf</code> como <code>EXTRACT-</code>. Así deja de escribirse
+    en cada búsqueda y funciona para todo el mundo.</p>
+
+    <div class="cod">
+      <div class="rotulo"><b>Modo sed, para tapar datos sensibles en la salida</b></div>
+      <pre data-spl>index=mi_servicio
+| rex field=_raw mode=sed "s/([0-9]{4})[0-9]{8}([0-9]{4})/\1********\2/g"</pre>
+    </div>
+
+    <h3>eval — campos calculados al vuelo</h3>
+    <div class="cod">
+      <pre data-spl>index=mi_servicio
+| eval hora=strftime(_time, "%d/%m %H:%M:%S"),
+       ms=round(request_time*1000, 1),
+       familia=substr(tostring(status), 1, 1) . "xx",
+       pesado=if(bytes &gt; 1000000, "sí", "no"),
+       franja=case(date_hour&lt;6, "madrugada", date_hour&lt;14, "mañana",
+                   date_hour&lt;22, "tarde", 1=1, "noche")
+| table hora contenedor uri familia ms pesado franja</pre>
+    </div>
+
+    <h3>lookup — cruzar con una tabla tuya</h3>
+    <div class="cod">
+      <div class="rotulo"><b>IPs que hablan con mi servicio y no están en mi inventario</b></div>
+      <pre data-spl>index=mi_servicio
+| lookup ips_conocidas.csv ip AS remote_addr OUTPUT propietario, criticidad
+| where isnull(propietario)
+| stats count by remote_addr</pre>
+    </div>
+    <p>Media hora de trabajo manual convertida en una línea.</p>
+  </div>
+</section>
+
+<!-- ═══ 5 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s5">
+  <div class="rail">05</div>
+  <div class="cuerpo">
+    <h2>Las consultas del servicio web</h2>
+    <p>Las mismas que trae <code>exportar.py</code> del kit, para tenerlas sueltas.</p>
+
+    <div class="cod">
+      <pre data-spl># Volumen total
+index=mi_servicio | stats count AS valor
+
+# Errores
+index=mi_servicio status&gt;=400 | stats count AS valor
+
+# Contenedores que están enviando ahora mismo
+index=mi_servicio | stats dc(contenedor) AS valor
+
+# Latencia media en milisegundos
+index=mi_servicio request_time=*
+| stats avg(request_time) AS valor
+| eval valor=round(valor*1000, 1)
+
+# Actividad por contenedor a lo largo del tiempo
+index=mi_servicio | timechart span=10m count by contenedor limit=6
+
+# Cómo termina cada petición
+index=mi_servicio | stats count AS valor by resultado | sort - valor
+
+# Rutas más pedidas
+index=mi_servicio uri=* | stats count AS valor by uri | sort - valor | head 10
+
+# Los últimos errores, para mirarlos de verdad
+index=mi_servicio status&gt;=400
+| eval hora=strftime(_time, "%d/%m %H:%M:%S")
+| table hora contenedor method uri status remote_addr
+| sort - hora
+| head 20</pre>
+    </div>
+
+    <h3>Tres más que no están en el kit y vas a querer</h3>
+    <div class="cod">
+      <div class="rotulo"><b>Percentil 95 por ruta: la media miente, el p95 no</b></div>
+      <pre data-spl>index=mi_servicio request_time=*
+| stats perc95(request_time) AS p95, count AS n by uri
+| where n &gt; 20
+| eval p95=round(p95*1000, 1)
+| sort - p95</pre>
+    </div>
+    <div class="cod">
+      <div class="rotulo"><b>Errores nuevos: los que aparecen hoy y no aparecieron ayer</b></div>
+      <pre data-spl>index=mi_servicio status&gt;=500 earliest=-48h
+| eval dia=if(_time &gt; relative_time(now(), "-24h"), "hoy", "ayer")
+| stats dc(dia) AS dias, values(dia) AS cuando, count by uri, status
+| where dias=1 AND cuando="hoy"</pre>
+    </div>
+    <div class="cod">
+      <div class="rotulo"><b>Lo que sale por stderr, que casi siempre merece una mirada</b></div>
+      <pre data-spl>index=mi_servicio flujo=stderr
+| stats count by contenedor, line
+| sort - count</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 6 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s6">
+  <div class="rail">06</div>
+  <div class="cuerpo">
+    <h2>Las consultas de endpoints</h2>
+
+    <div class="ojo">
+      <span class="et">Ojo con el sourcetype</span>
+      <p>Si instalaste el forwarder con <code>renderXml = true</code>, el sourcetype no es
+      <code>WinEventLog:Security</code> sino <code>XmlWinEventLog:Security</code>, y los campos
+      salen distintos. Compruébalo antes con <code>| metadata type=sourcetypes</code>.</p>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Fallos de autenticación en Windows, agrupados por origen</b></div>
+      <pre data-spl>index=endpoints EventCode=4625
+| stats count AS intentos, dc(Account_Name) AS cuentas,
+        min(_time) AS primero, max(_time) AS ultimo
+  by host, src_ip
+| where intentos &gt;= 5
+| eval primero=strftime(primero, "%H:%M:%S"), ultimo=strftime(ultimo, "%H:%M:%S")
+| sort - intentos</pre>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Fuerza bruta seguida de un éxito: el patrón que de verdad importa</b></div>
+      <pre data-spl>index=endpoints (EventCode=4625 OR EventCode=4624)
+| sort 0 _time
+| streamstats count(eval(EventCode=4625)) AS fallos by Account_Name, src_ip
+| where EventCode=4624 AND fallos &gt;= 10
+| table _time host Account_Name src_ip fallos</pre>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Servicio nuevo instalado (7045): persistencia clásica</b></div>
+      <pre data-spl>index=endpoints EventCode=7045
+| table _time host Service_Name Service_File_Name Service_Start_Type</pre>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Sysmon: proceso hijo de un Office</b></div>
+      <pre data-spl>index=endpoints sourcetype=XmlWinEventLog:Microsoft-Windows-Sysmon/Operational EventCode=1
+| where match(lower(ParentImage), "(winword|excel|powerpnt|outlook)[.]exe$")
+| table _time host User ParentImage Image CommandLine</pre>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Linux: sudo y su</b></div>
+      <pre data-spl>index=endpoints sourcetype=linux_secure ("sudo:" OR "su:")
+| rex "(?&lt;usuario&gt;\w+) : TTY=(?&lt;tty&gt;\S+) ; PWD=(?&lt;pwd&gt;\S+) ; USER=(?&lt;destino&gt;\S+) ; COMMAND=(?&lt;comando&gt;.*)"
+| table _time host usuario destino comando</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 7 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s7">
+  <div class="rail">07</div>
+  <div class="cuerpo">
+    <h2>La salud del propio Splunk</h2>
+    <p>Estas separan a alguien que sabe buscar de alguien que administra.</p>
+
+    <div class="cod">
+      <div class="rotulo"><b>Forwarders que han dejado de enviar</b></div>
+      <pre data-spl>index=_internal source=*metrics.log group=tcpin_connections
+| stats latest(_time) AS ultimo by hostname
+| eval minutos=round((now()-ultimo)/60, 1)
+| where minutos &gt; 15
+| sort - minutos</pre>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Cuántos datos indexa cada índice al día (control de licencia)</b></div>
+      <pre data-spl>index=_internal source=*license_usage.log type=Usage
+| eval GB=b/1024/1024/1024
+| timechart span=1d sum(GB) AS GB by idx</pre>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Errores del propio Splunk</b></div>
+      <pre data-spl>index=_internal source=*splunkd.log log_level IN ("ERROR", "WARN")
+| stats count by component, log_level
+| sort - count</pre>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Eventos que llegaron con la hora mal — el fallo silencioso más común</b></div>
+      <pre data-spl>index=mi_servicio
+| eval desfase=round((_indextime - _time)/60, 1)
+| stats avg(desfase) AS medio, max(desfase) AS peor by sourcetype
+| where abs(medio) &gt; 5</pre>
+    </div>
+
+    <p><code>_time</code> es la hora del evento; <code>_indextime</code>, la hora en que Splunk lo
+    escribió. Si difieren mucho, o tienes un <code>TZ</code> mal puesto en <code>props.conf</code>,
+    o un forwarder atascado. En los dos casos tus alertas se disparan tarde y no te enteras.</p>
+  </div>
+</section>
+
+<!-- ═══ 8 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s8">
+  <div class="rail">08</div>
+  <div class="cuerpo">
+    <h2>Exportar</h2>
+    <p>Cinco vías. La que elijas depende de si el destino está dentro o fuera de Splunk.</p>
+
+    <h3>Los tres límites que cortan tu fichero sin avisar</h3>
+    <div class="tabla-env">
+      <table class="limites">
+        <thead><tr><th>Vía</th><th>Corta en</th><th>Se quita con</th></tr></thead>
+        <tbody>
+          <tr><td>Interfaz, búsqueda con <code>stats</code></td>
+              <td class="cifra num">50.000 filas</td>
+              <td><code>limits.conf</code> → <code>maxresultrows</code></td></tr>
+          <tr><td>CLI <code>splunk search</code></td>
+              <td class="cifra num">100 eventos</td>
+              <td class="arreglo">-maxout 0</td></tr>
+          <tr><td>API, <code>/jobs/&lt;sid&gt;/results</code></td>
+              <td class="cifra num">100 filas</td>
+              <td class="arreglo">count=0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Ninguno de los tres da error. El fichero simplemente acaba antes.</p>
+
+    <h3>8.1 · Interfaz — para una vez</h3>
+    <p>Lanzas la búsqueda, botón <strong>Export</strong> arriba a la derecha. CSV, XML, JSON,
+    y "Raw Events" si la búsqueda no transforma. Para volúmenes mayores, usa la API.</p>
+
+    <h3>8.2 · Dentro de Splunk — outputcsv, outputlookup, collect</h3>
+    <div class="cod">
+      <pre data-spl>index=mi_servicio | stats count by uri | outputcsv informe_rutas
+
+index=mi_servicio | stats count by remote_addr
+| outputlookup ips_vistas.csv createinapp=true
+
+index=mi_servicio | stats count by uri, status | collect index=resumen</pre>
+    </div>
+    <ul class="puntos">
+      <li><code>outputcsv</code> escribe en <code>$SPLUNK_HOME/var/run/splunk/csv/</code>, y lo
+      recuperas con <code>| inputcsv</code>.</li>
+      <li><code>outputlookup</code> sí es reutilizable: lo cruzas con <code>| lookup</code> desde
+      cualquier búsqueda.</li>
+      <li><code>collect</code> guarda el <strong>resultado</strong> como eventos nuevos en otro
+      índice. Es la manera de conservar métricas dos años sin conservar dos años de logs en bruto.</li>
+    </ul>
+
+    <h3>8.3 · CLI — para scripts en la propia máquina</h3>
+    <div class="cod">
+      <pre class="sh" data-sh>splunk search 'index=mi_servicio | stats count by resultado' \
+  -earliest_time -24h -latest_time now \
+  -output json -maxout 0 -preview 0 \
+  -auth admin:tu_password \
+  &gt; salida.json</pre>
+    </div>
+    <ul class="puntos">
+      <li><code>-output</code>: <code>json</code>, <code>csv</code>, <code>table</code>,
+      <code>raw</code>, <code>rawdata</code>, <code>auto</code>.</li>
+      <li><code>-maxout 0</code> es imprescindible: por defecto son <strong>100</strong> eventos.</li>
+      <li>Aquí el <code>search</code> inicial es implícito. Sí lo escribes si la búsqueda empieza
+      por tubería.</li>
+    </ul>
+
+    <h3>8.4 · API REST — la que vas a usar de verdad</h3>
+    <div class="cod">
+      <div class="rotulo"><b>Paso 1 · la sesión</b><button class="copiar" type="button">Copiar</button></div>
+      <pre class="sh" data-sh>SESION=$(curl -sk https://localhost:8089/services/auth/login \
+  -d username=admin -d password="$SPLUNK_PASSWORD" -d output_mode=json \
+  | python3 -c 'import sys,json; print(json.load(sys.stdin)["sessionKey"])')</pre>
+    </div>
+
+    <div class="cod">
+      <div class="rotulo"><b>Paso 2 · la búsqueda, en una sola petición</b><button class="copiar" type="button">Copiar</button></div>
+      <pre class="sh" data-sh>curl -sk https://localhost:8089/services/search/jobs/export \
+  -H "Authorization: Splunk $SESION" \
+  -d search='search index=mi_servicio | stats count AS n by resultado' \
+  -d earliest_time=-24h \
+  -d latest_time=now \
+  -d output_mode=json \
+  -d count=0 \
+  &gt; salida.json</pre>
+    </div>
+
+    <p>En JSON la respuesta es <strong>un objeto por línea</strong>, no un array. Cada línea es
+    <code>{"preview":false,"result":{…}}</code>. Si quieres un array de verdad:</p>
+    <div class="cod">
+      <pre class="sh" data-sh>... -d output_mode=json | python3 -c '
+import sys, json
+print(json.dumps([json.loads(l)["result"] for l in sys.stdin if l.strip() and "result" in l]))
+' &gt; salida.json</pre>
+    </div>
+
+    <p><code>output_mode</code> acepta <code>json</code>, <code>json_rows</code>,
+    <code>json_cols</code>, <code>csv</code>, <code>xml</code>, <code>atom</code> y
+    <code>raw</code>. Para una gráfica, <code>json_cols</code> te ahorra transponer.</p>
+
+    <h3>Búsquedas largas: el trabajo asíncrono</h3>
+    <p><code>export</code> mantiene la conexión abierta; para una búsqueda de horas eso no aguanta.
+    Se lanza, se pregunta, se recoge.</p>
+    <div class="cod">
+      <div class="rotulo"><b>Lanzar, preguntar, recoger</b><button class="copiar" type="button">Copiar</button></div>
+      <pre class="sh" data-sh># lanzar
+SID=$(curl -sk https://localhost:8089/services/search/jobs \
+  -H "Authorization: Splunk $SESION" \
+  -d search='search index=mi_servicio earliest=-30d | stats count by uri' \
+  -d output_mode=json | python3 -c 'import sys,json; print(json.load(sys.stdin)["sid"])')
+
+# preguntar si ha terminado
+curl -sk "https://localhost:8089/services/search/jobs/$SID" \
+  -H "Authorization: Splunk $SESION" -d output_mode=json \
+  | python3 -c 'import sys,json; c=json.load(sys.stdin)["entry"][0]["content"]; print(c["dispatchState"], c["doneProgress"])'
+
+# recoger — sin count=0 te llevas solo 100 filas
+curl -sk "https://localhost:8089/services/search/jobs/$SID/results" \
+  -H "Authorization: Splunk $SESION" \
+  -d output_mode=json -d count=0 -d offset=0 \
+  &gt; salida.json</pre>
+    </div>
+
+    <div class="ojo">
+      <span class="et">En producción</span>
+      <p>No uses la contraseña de admin. En <strong>Settings → Tokens</strong> creas un token para
+      un usuario con permisos mínimos, y la cabecera pasa a ser
+      <code>-H "Authorization: Bearer $TOKEN"</code>. No caduca al reiniciar, se revoca solo y no
+      expone nada.</p>
+      <p>En Splunk 9 y 10 existe además <code>/services/search/v2/jobs</code> y su
+      <code>/v2/jobs/export</code>. La v1 sigue funcionando; si empiezas de cero, usa la v2.</p>
+    </div>
+
+    <h3>8.5 · Programado, sin que nadie lo lance</h3>
+    <div class="cod">
+      <div class="rotulo"><b>savedsearches.conf</b></div>
+      <pre class="ini" data-ini>[Informe diario del servicio]
+search = index=mi_servicio | stats count AS peticiones, dc(remote_addr) AS ips by contenedor, resultado
+dispatch.earliest_time = -24h@h
+dispatch.latest_time = now
+cron_schedule = 5 7 * * *
+enableSched = 1
+action.email = 1
+action.email.to = tu@correo.com
+action.email.format = csv
+action.email.sendcsv = 1</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 9 ═══════════════════════════════════════════════════════════════ -->
+<section class="bloque" id="s9">
+  <div class="rail">09</div>
+  <div class="cuerpo">
+    <h2>Los fallos que vas a cometer una vez</h2>
+
+    <div class="tabla-env">
+      <table>
+        <thead><tr><th>Síntoma</th><th>Casi siempre es</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Cero resultados y ningún error</strong></td>
+              <td>El <code>search</code> inicial que falta en la API; un campo que se llama
+              <code>line.status</code> y no <code>status</code>; o el rango de tiempo, que por
+              defecto son las últimas 24 horas.</td></tr>
+          <tr><td><strong>El fichero exportado se corta</strong></td>
+              <td>Los tres límites de arriba. <code>-maxout 100</code>, <code>count=100</code> o
+              <code>maxresultrows=50000</code>.</td></tr>
+          <tr><td><strong>La búsqueda tarda una eternidad</strong></td>
+              <td>Mira dónde está la primera tubería. <code>index=* | search algo</code> lee todo
+              Splunk para tirar el 99%.</td></tr>
+          <tr><td><strong>El resultado sale desordenado</strong></td>
+              <td><code>table</code> elige columnas, no ordena. Falta el <code>sort</code>.
+              Y <code>sort</code> corta a 10.000 filas: <code>| sort 0 campo</code> quita el
+              límite — ese <code>0</code> no es una errata.</td></tr>
+          <tr><td><strong>Un <code>eval</code> devuelve texto en vez del campo</strong></td>
+              <td>Las comillas. En SPL, <code>"dobles"</code> para valores literales y
+              <code>'simples'</code> para <strong>nombres de campo</strong>. Es al revés de casi
+              todos los lenguajes que conoces.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer class="pie">
+  <span>Índice de ejemplo <code>mi_servicio</code> · campos del <code>props.conf</code> del kit</span>
+  <span><a href="https://help.splunk.com/en/splunk-enterprise/search/spl-search-reference">Search Reference de Splunk</a></span>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var COMANDOS = ["search","stats","eval","where","table","sort","head","tail","timechart",
+    "chart","top","rare","dedup","fields","rename","lookup","inputlookup","outputlookup",
+    "outputcsv","inputcsv","collect","metadata","eventcount","fieldsummary","rest","spath",
+    "rex","regex","eventstats","streamstats","transaction","makeresults","tstats","foreach",
+    "append","appendcols","join","bin","bucket","fillnull","mvexpand","sendemail","datamodel",
+    "addinfo","untable","xyseries","map","multisearch","erex","iplocation","geostats"];
+
+  var FUNCIONES = ["count","dc","sum","avg","max","min","values","list","latest","earliest",
+    "stdev","perc95","median","round","strftime","strptime","if","case","coalesce","isnull",
+    "isnotnull","match","lower","upper","substr","tostring","tonumber","replace","len",
+    "relative_time","now","cidrmatch","abs","split","mvcount","mvindex","mvjoin","exact",
+    "like","searchmatch","nullif","validate","printf","typeof","json_extract"];
+
+  var PALABRAS = ["AS","as","BY","by","OR","AND","NOT","IN","over","output","OUTPUT","input"];
+
+  function esc(s){
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  // Un solo barrido. El orden de las alternativas ES la precedencia.
+  var RX_SPL = new RegExp([
+    "(#[^\\n]*)",                                            // 1 comentario
+    "(\"(?:[^\"\\\\]|\\\\.)*\")",                            // 2 cadena
+    "(\\|)(\\s*)(" + COMANDOS.join("|") + ")\\b",            // 3,4,5 tubería + comando
+    "\\b(" + FUNCIONES.join("|") + ")(?=\\()",               // 6 función
+    "\\b(" + PALABRAS.join("|") + ")\\b",                    // 7 palabra clave
+    "([A-Za-z_][A-Za-z0-9_.]*)(?=\\s*(?:>=|<=|!=|=|>|<))",   // 8 nombre de campo
+    "\\b(\\d+(?:\\.\\d+)?)\\b"                               // 9 número
+  ].join("|"), "g");
+
+  function pintaSPL(txt){
+    return esc(txt).replace(RX_SPL, function(m, com, str, pipe, hueco, cmd, fn, kw, campo, num){
+      if (com   !== undefined) return '<span class="t-com">' + com + "</span>";
+      if (str   !== undefined) return '<span class="t-str">' + str + "</span>";
+      if (pipe  !== undefined) return '<span class="t-pipe">|</span>' + hueco +
+                                      '<span class="t-cmd">' + cmd + "</span>";
+      if (fn    !== undefined) return '<span class="t-fn">' + fn + "</span>";
+      if (kw    !== undefined) return '<span class="t-kw">' + kw + "</span>";
+      if (campo !== undefined) return '<span class="t-campo">' + campo + "</span>";
+      if (num   !== undefined) return '<span class="t-num">' + num + "</span>";
+      return m;
+    });
+  }
+
+  var RX_SH = new RegExp([
+    "(#[^\\n]*)",                                            // 1 comentario
+    "('(?:[^'])*'|\"(?:[^\"\\\\]|\\\\.)*\")",                // 2 cadena
+    "(\\$\\{?[A-Za-z_][A-Za-z0-9_]*\\}?)",                   // 3 variable
+    "\\b(curl|python3|splunk|search|export|echo|cat)\\b",    // 4 orden
+    "(\\s-{1,2}[A-Za-z_][A-Za-z0-9_-]*)"                     // 5 opción
+  ].join("|"), "g");
+
+  function pintaSH(txt){
+    return esc(txt).replace(RX_SH, function(m, com, str, va, cmd, opt){
+      if (com !== undefined) return '<span class="t-com">' + com + "</span>";
+      if (str !== undefined) return '<span class="t-str">' + str + "</span>";
+      if (va  !== undefined) return '<span class="t-num">' + va + "</span>";
+      if (cmd !== undefined) return '<span class="t-cmd">' + cmd + "</span>";
+      if (opt !== undefined) return '<span class="t-fn">' + opt + "</span>";
+      return m;
+    });
+  }
+
+  function pintaINI(txt){
+    return esc(txt).replace(/^(\[[^\]\n]*\])|^([A-Za-z_][\w.]*)(\s*=\s*)(.*)$/gm,
+      function(m, sec, clave, ig, valor){
+        if (sec !== undefined) return '<span class="t-cmd">' + sec + "</span>";
+        return '<span class="t-campo">' + clave + "</span>" + ig +
+               '<span class="t-str">' + valor + "</span>";
+      });
+  }
+
+  document.querySelectorAll("pre[data-spl]").forEach(function(el){
+    el.dataset.crudo = el.textContent;
+    el.innerHTML = pintaSPL(el.textContent);
+  });
+  document.querySelectorAll("pre[data-sh]").forEach(function(el){
+    el.dataset.crudo = el.textContent;
+    el.innerHTML = pintaSH(el.textContent);
+  });
+  document.querySelectorAll("pre[data-ini]").forEach(function(el){
+    el.dataset.crudo = el.textContent;
+    el.innerHTML = pintaINI(el.textContent);
+  });
+
+  // Copiar. Si el portapapeles no está disponible, selecciona el texto y lo dice.
+  document.querySelectorAll("button.copiar").forEach(function(boton){
+    boton.addEventListener("click", function(){
+      var caja = boton.closest(".cod");
+      var pre = caja && caja.querySelector("pre");
+      if (!pre) return;
+      var texto = pre.dataset.crudo || pre.textContent;
+      var original = boton.textContent;
+      function avisa(msg){
+        boton.textContent = msg;
+        setTimeout(function(){ boton.textContent = original; }, 1800);
+      }
+      function seleccionar(){
+        var r = document.createRange();
+        r.selectNodeContents(pre);
+        var s = window.getSelection();
+        s.removeAllRanges();
+        s.addRange(r);
+        avisa("Pulsa Ctrl+C");
+      }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(texto)
+            .then(function(){ avisa("Copiado"); })
+            .catch(seleccionar);
+        } else {
+          seleccionar();
+        }
+      } catch (e) {
+        seleccionar();
+      }
+    });
+  });
+})();
+</script>

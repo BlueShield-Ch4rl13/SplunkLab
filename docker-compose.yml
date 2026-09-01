@@ -1,0 +1,102 @@
+# =============================================================================
+#  SPLUNK DESDE CERO  -  lo mínimo para: crear un índice, meter dentro los
+#  eventos de un servicio de Docker, y volver a sacarlos en JSON y HTML.
+# =============================================================================
+#
+#   mi-servicio (nginx)  ──stdout──►  driver de logging de Docker
+#                                            │  HEC, puerto 8088
+#                                            ▼
+#                                         SPLUNK   ── índice: mi_servicio
+#                                            │
+#                                            │  API REST, puerto 8089
+#                                            ▼
+#                                       exportar.py  ──►  salida/datos.json
+#                                                         salida/dashboard.html
+#
+#  Arranque:   cp .env.example .env  &&  docker compose up -d
+#  Guía:       GUIA.md
+# =============================================================================
+
+name: splunk-inicio
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # SPLUNK. Nada más: ni forwarder ni apps de terceros.
+  # ---------------------------------------------------------------------------
+  splunk:
+    image: splunk/splunk:${SPLUNK_TAG:-latest}
+    container_name: splunk
+    hostname: splunk
+    restart: unless-stopped
+    environment:
+      # Las DOS variables de licencia son obligatorias desde la versión 10.
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD:?falta SPLUNK_PASSWORD en el fichero .env}
+      - SPLUNK_ROLE=splunk_standalone
+      - SPLUNK_S2S_PORT=9997
+    ports:
+      - "${SPLUNK_WEB_PORT:-8000}:8000"   # interfaz web
+      - "${SPLUNK_HEC_PORT:-8088}:8088"   # HTTP Event Collector: por aquí entran los logs
+      - "${SPLUNK_MGMT_PORT:-8089}:8089"  # API REST: por aquí los sacamos
+    volumes:
+      - splunk-var:/opt/splunk/var       # los datos indexados
+      - splunk-etc:/opt/splunk/etc       # la configuración
+      # AQUÍ ESTÁ TODO LO IMPORTANTE: el índice y el token de HEC se definen en
+      # ficheros de esta carpeta, montada dentro de Splunk como una app.
+      - ./splunk/apps/mi_indice:/opt/splunk/etc/apps/mi_indice
+    ulimits:
+      nofile: {soft: 65536, hard: 65536}
+    healthcheck:
+      test: ["CMD", "/sbin/checkstate.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 120s
+
+  # ---------------------------------------------------------------------------
+  # TU SERVICIO. Aquí va nginx como ejemplo, pero sustituye esto por el tuyo:
+  # lo único que importa es el bloque `logging`.
+  # ---------------------------------------------------------------------------
+  mi-servicio:
+    image: nginx:alpine
+    container_name: mi-servicio
+    restart: unless-stopped
+    depends_on:
+      splunk:
+        condition: service_healthy
+    ports:
+      - "${SERVICIO_PORT:-8080}:80"
+    volumes:
+      # nginx configurado para escribir sus accesos en JSON. Si tu servicio ya
+      # escribe JSON, mucho mejor: te ahorras toda la configuración de parseo.
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+    # === ESTO ES LO QUE MANDA LOS LOGS A SPLUNK ==============================
+    # Lo que el contenedor escriba por consola (stdout y stderr) se va por HEC
+    # en vez de quedarse en un fichero local. Cópialo tal cual en tu servicio.
+    logging:
+      driver: splunk
+      options:
+        # OJO: quien abre esta conexión es el demonio de Docker, que corre en TU
+        # máquina, no el contenedor. Por eso es localhost y no "splunk".
+        splunk-url: "https://localhost:${SPLUNK_HEC_PORT:-8088}"
+        splunk-token: "${HEC_TOKEN:-11112222-3333-4444-5555-666677778888}"
+        splunk-index: "mi_servicio"
+        splunk-sourcetype: "mi_servicio:docker"
+        splunk-source: "docker"
+        # El certificado de Splunk es autofirmado: en el laboratorio no se valida.
+        splunk-insecureskipverify: "true"
+        # Con "true", si Splunk no responde el contenedor NO ARRANCA. Es más
+        # seguro (te enteras enseguida) pero más frágil el primer día.
+        splunk-verify-connection: "false"
+        # inline (por defecto) | json | raw   -> ver GUIA.md, paso 4
+        splunk-format: "json"
+        splunk-gzip: "true"
+        # El nombre del contenedor viaja como "tag": así sabes de quién es cada log.
+        tag: "{{.Name}}"
+
+volumes:
+  splunk-var:
+  splunk-etc:
