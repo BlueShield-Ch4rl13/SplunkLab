@@ -82,7 +82,7 @@ services:
         # OJO: quien abre esta conexión es el demonio de Docker, que corre en TU
         # máquina, no el contenedor. Por eso es localhost y no "splunk".
         splunk-url: "https://localhost:${SPLUNK_HEC_PORT:-8088}"
-        splunk-token: "${HEC_TOKEN:-11112222-3333-4444-5555-666677778888}"
+        splunk-token: "${HEC_TOKEN:?falta HEC_TOKEN en el fichero .env}"
         splunk-index: "mi_servicio"
         splunk-sourcetype: "mi_servicio:docker"
         splunk-source: "docker"

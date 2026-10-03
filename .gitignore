@@ -1,0 +1,10 @@
+# Entorno local: NUNCA se sube (contiene SPLUNK_PASSWORD y HEC_TOKEN)
+.env
+
+# Salida generada por exportar.py (no es código)
+salida/
+
+# Artefactos de Python
+__pycache__/
+*.pyc
+.pytest_cache/
