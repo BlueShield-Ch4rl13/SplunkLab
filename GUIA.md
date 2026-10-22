@@ -32,7 +32,7 @@ pide 2 GB solo para él) y Python 3 para el exportador.
 ## Paso 1. Levantar Splunk vacío
 
 ```bash
-cp .env.example .env      # ajusta la contraseña si quieres
+make up                   # crea .env (contraseña y token de HEC aleatorios) y arranca
 docker compose up -d
 docker compose ps         # espera a que splunk ponga (healthy)
 ```
@@ -139,7 +139,9 @@ de Docker habla exactamente eso, así que es lo que hay que tener levantado.
 
 Igual que con el índice, se puede crear desde la interfaz
 (**Settings → Data inputs → HTTP Event Collector → New Token**) o en un
-fichero. Aquí está en `splunk/apps/mi_indice/default/inputs.conf`:
+fichero. Aquí el escuchador está en `splunk/apps/mi_indice/default/inputs.conf`
+y el token lo escribe `make up` en `splunk/apps/mi_indice/local/inputs.conf`
+(fuera del repositorio):
 
 ```ini
 [http]
@@ -149,7 +151,7 @@ enableSSL = 1
 
 [http://mi_servicio]
 disabled = 0
-token = 11112222-3333-4444-5555-666677778888
+token = <el HEC_TOKEN de tu .env, generado por make up>
 index = mi_servicio
 indexes = mi_servicio          # lista blanca: no puede escribir en otro sitio
 sourcetype = mi_servicio:docker
@@ -160,14 +162,14 @@ aplicación sin tocar las demás, el índice y el sourcetype quedan forzados des
 el servidor (el cliente no puede mentir) y sabes quién te está gastando la
 licencia.
 
-> El token del `inputs.conf` y el `HEC_TOKEN` del `.env` **tienen que ser el
-> mismo**. Si cambias uno, cambia el otro.
+> El token de `local/inputs.conf` y el `HEC_TOKEN` del `.env` **tienen que ser el
+> mismo**. No lo edites a mano: cambia el `.env` y ejecuta `./scripts/generar-secretos.sh`.
 
 **Compruébalo a mano:**
 
 ```bash
 curl -k https://localhost:8088/services/collector/event \
-  -H "Authorization: Splunk 11112222-3333-4444-5555-666677778888" \
+  -H "Authorization: Splunk $(grep ^HEC_TOKEN= .env | cut -d= -f2)" \
   -d '{"event":{"prueba":"hola"},"sourcetype":"mi_servicio:docker"}'
 # {"text":"Success","code":0}
 ```
@@ -199,7 +201,7 @@ services:
       driver: splunk
       options:
         splunk-url: "https://localhost:8088"
-        splunk-token: "11112222-3333-4444-5555-666677778888"
+        splunk-token: "${HEC_TOKEN}"
         splunk-index: "mi_servicio"
         splunk-sourcetype: "mi_servicio:docker"
         splunk-insecureskipverify: "true"
@@ -469,7 +471,7 @@ services:
       driver: splunk
       options:
         splunk-url: "https://localhost:8088"
-        splunk-token: "11112222-3333-4444-5555-666677778888"
+        splunk-token: "${HEC_TOKEN}"
         splunk-index: "mi_servicio"
         splunk-sourcetype: "mi_servicio:docker"
         splunk-insecureskipverify: "true"

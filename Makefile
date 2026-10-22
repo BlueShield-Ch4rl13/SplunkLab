@@ -17,10 +17,10 @@ ayuda:  ## Muestra esta ayuda
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
 
 up:  ## Levanta Splunk y el servicio (el primer arranque tarda 1-3 min)
-	@test -f .env || cp .env.example .env
+	@./scripts/generar-secretos.sh
 	$(COMPOSE) up -d
 	@echo ""
-	@echo "  Splunk    : http://localhost:8000   (admin / la del .env)"
+	@echo "  Splunk    : http://localhost:8000   (admin / SPLUNK_PASSWORD del .env)"
 	@echo "  Tu servicio: http://localhost:8080"
 	@echo ""
 	@echo "  Espera a que el estado sea healthy:  make estado"
@@ -117,6 +117,7 @@ json:  ## Exporta y vuelca salida/datos.json por consola
 	@cat salida/datos.json
 
 ficheros:  ## Levanta la VIA B: el servicio escribe ficheros y los lee un forwarder
+	@./scripts/generar-secretos.sh
 	$(COMPOSE) -f docker-compose.yml -f docker-compose.ficheros.yml up -d
 
 shell:  ## Abre una shell dentro del contenedor de Splunk
@@ -124,4 +125,5 @@ shell:  ## Abre una shell dentro del contenedor de Splunk
 
 reset:  ## BORRA todos los datos indexados y vuelve a empezar
 	$(COMPOSE) down -v
+	@./scripts/generar-secretos.sh
 	$(COMPOSE) up -d

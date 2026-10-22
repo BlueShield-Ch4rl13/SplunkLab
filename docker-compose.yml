@@ -13,7 +13,7 @@
 #                                       exportar.py  ──►  salida/datos.json
 #                                                         salida/dashboard.html
 #
-#  Arranque:   cp .env.example .env  &&  docker compose up -d
+#  Arranque:   make up   (crea .env con contraseña y token aleatorios)
 #  Guía:       GUIA.md
 # =============================================================================
 
@@ -36,10 +36,12 @@ services:
       - SPLUNK_PASSWORD=${SPLUNK_PASSWORD:?falta SPLUNK_PASSWORD en el fichero .env}
       - SPLUNK_ROLE=splunk_standalone
       - SPLUNK_S2S_PORT=9997
+    # Solo en 127.0.0.1 por defecto: con 0.0.0.0, cualquiera de la red llegaba
+    # al login de Splunk y a la API. Para abrirlo a la LAN, SPLUNK_BIND en .env.
     ports:
-      - "${SPLUNK_WEB_PORT:-8000}:8000"   # interfaz web
-      - "${SPLUNK_HEC_PORT:-8088}:8088"   # HTTP Event Collector: por aquí entran los logs
-      - "${SPLUNK_MGMT_PORT:-8089}:8089"  # API REST: por aquí los sacamos
+      - "${SPLUNK_BIND:-127.0.0.1}:${SPLUNK_WEB_PORT:-8000}:8000"   # interfaz web
+      - "${SPLUNK_BIND:-127.0.0.1}:${SPLUNK_HEC_PORT:-8088}:8088"   # HTTP Event Collector: por aquí entran los logs
+      - "${SPLUNK_BIND:-127.0.0.1}:${SPLUNK_MGMT_PORT:-8089}:8089"  # API REST: por aquí los sacamos
     volumes:
       - splunk-var:/opt/splunk/var       # los datos indexados
       - splunk-etc:/opt/splunk/etc       # la configuración
@@ -67,7 +69,7 @@ services:
       splunk:
         condition: service_healthy
     ports:
-      - "${SERVICIO_PORT:-8080}:80"
+      - "${SPLUNK_BIND:-127.0.0.1}:${SERVICIO_PORT:-8080}:80"
     volumes:
       # nginx configurado para escribir sus accesos en JSON. Si tu servicio ya
       # escribe JSON, mucho mejor: te ahorras toda la configuración de parseo.
