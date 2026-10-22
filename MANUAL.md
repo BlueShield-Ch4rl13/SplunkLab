@@ -271,7 +271,9 @@ te dice qué falta. Vuelve a él cada vez que algo no cuadre.
 ```bash
 cd ~/splunk-inicio
 cp .env.example .env
-nano .env                  # cambia SPLUNK_PASSWORD (mínimo 8 caracteres)
+nano .env                  # SPLUNK_BIND=0.0.0.0 para entrar desde otro equipo
+                           # (y cierra los puertos con el cortafuegos a tu red)
+./scripts/generar-secretos.sh   # contraseña y token de HEC aleatorios
 docker compose up -d
 docker compose ps          # espera a que splunk ponga (healthy)
 ```
@@ -330,12 +332,12 @@ Dos cosas que conviene tener claras desde el principio:
 ## Parte 5 — La puerta de entrada
 
 El **HTTP Event Collector** es el puerto 8088. El driver de logging de Docker
-habla exactamente eso. También viene ya configurado, en
-`splunk/apps/mi_indice/default/inputs.conf`:
+habla exactamente eso. Lo configura `make up` en
+`splunk/apps/mi_indice/local/inputs.conf`, con un token aleatorio:
 
 ```ini
 [http://mi_servicio]
-token = 11112222-3333-4444-5555-666677778888
+token = <el HEC_TOKEN de tu .env, generado por make up>
 index = mi_servicio
 indexes = mi_servicio          # lista blanca: no puede escribir en otro sitio
 sourcetype = mi_servicio:docker
@@ -345,14 +347,14 @@ sourcetype = mi_servicio:docker
 tocar las demás, el índice queda forzado desde el servidor y sabes quién te
 está gastando la licencia.
 
-> El token de `inputs.conf` y el `HEC_TOKEN` del `.env` **tienen que ser el
-> mismo**. Es el fallo número uno al empezar, y `01-verificar.sh` lo comprueba.
+> El token de `local/inputs.conf` y el `HEC_TOKEN` del `.env` **tienen que ser el
+> mismo**. `make up` los escribe juntos y `01-verificar.sh` lo comprueba.
 
 **Pruébalo:**
 
 ```bash
 curl -k https://localhost:8088/services/collector/event \
-  -H "Authorization: Splunk 11112222-3333-4444-5555-666677778888" \
+  -H "Authorization: Splunk $(grep ^HEC_TOKEN= .env | cut -d= -f2)" \
   -d '{"event":{"prueba":"hola"},"sourcetype":"mi_servicio:docker"}'
 # {"text":"Success","code":0}
 ```
@@ -368,7 +370,7 @@ logging:
   driver: splunk
   options:
     splunk-url: "https://localhost:8088"
-    splunk-token: "11112222-3333-4444-5555-666677778888"
+    splunk-token: "${HEC_TOKEN}"
     splunk-index: "mi_servicio"
     splunk-sourcetype: "mi_servicio:docker"
     splunk-insecureskipverify: "true"

@@ -79,14 +79,16 @@ if [[ -f .env ]]; then
   TOKEN_ENV=$(grep -E '^HEC_TOKEN=' .env | cut -d= -f2-)
   (( ${#CLAVE} >= 8 )) && ok "la contraseña tiene ${#CLAVE} caracteres" \
                        || mal "SPLUNK_PASSWORD debe tener 8 caracteres o más"
-  TOKEN_CONF=$(grep -E '^token *=' splunk/apps/mi_indice/default/inputs.conf | head -1 | cut -d= -f2- | tr -d ' ')
-  if [[ "$TOKEN_ENV" == "$TOKEN_CONF" ]]; then
-    ok "el token de HEC coincide en .env y en inputs.conf"
+  TOKEN_CONF=$(grep -sE '^token *=' splunk/apps/mi_indice/local/inputs.conf | head -1 | cut -d= -f2- | tr -d ' ')
+  if [[ "$TOKEN_ENV" == "11112222-3333-4444-5555-666677778888" ]]; then
+    mal "HEC_TOKEN es el token de ejemplo que estuvo publicado: ejecuta ./scripts/generar-secretos.sh"
+  elif [[ -n "$TOKEN_ENV" && "$TOKEN_ENV" == "$TOKEN_CONF" ]]; then
+    ok "el token de HEC coincide en .env y en local/inputs.conf"
   else
-    mal "el token de .env y el de inputs.conf NO coinciden: los logs no entrarán"
+    mal "el token de .env y el de local/inputs.conf NO coinciden: ejecuta ./scripts/generar-secretos.sh"
   fi
 else
-  mal "falta .env  (cp .env.example .env)"
+  mal "falta .env  (make up, o ./scripts/generar-secretos.sh)"
 fi
 
 if docker compose ps --format '{{.Service}} {{.State}}' 2>/dev/null | grep -q .; then

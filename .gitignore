@@ -8,3 +8,6 @@ salida/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Token de HEC generado por scripts/generar-secretos.sh: no se sube
+splunk/apps/mi_indice/local/

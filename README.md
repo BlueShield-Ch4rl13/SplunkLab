@@ -6,7 +6,9 @@ SIEM de verdad, y las hace con ficheros versionados en vez de con clics:
 1. **Indexar** — un servicio manda sus logs a Splunk, con el índice, el token
    de HEC y el parseo definidos en `.conf`, no en la interfaz.
 2. **Detectar** — 21 reglas de detección agrupadas por tipo de dispositivo, con
-   su ventana, su umbral, su silenciado y su severidad.
+   su ventana, su umbral, su silenciado y su severidad. **11 están activas** (las
+   7 web y las 4 de salud del SIEM); las otras 10 vienen desactivadas porque
+   necesitan una fuente (Linux, Windows, red, VPN) que el laboratorio no trae.
 3. **Sacar los datos** — de vuelta a JSON, CSV y un dashboard HTML propio, por
    la API REST y sin instalar nada.
 
@@ -19,7 +21,7 @@ alternativas de ingesta y el exportador.
  mi-servicio ──stdout──► driver de logging ──HEC 8088──► SPLUNK
                                                             │  índice mi_servicio
                                                             │
-                                  21 reglas, cada 5 min ────┤
+                     11 reglas activas, cada 5-60 min ──────┤
                                                             │  índice mi_alertas
                                                             │  Triggered Alerts
                                               API REST 8089 │
@@ -57,12 +59,11 @@ sudo reboot
 Y luego el lab:
 
 ```bash
-cp .env.example .env
-make up          # Splunk + el servicio (1-3 min el primer arranque)
+make up          # crea .env con contraseña y token aleatorios, y arranca Splunk + el servicio
 make comprobar   # ¿existe el índice? ¿funciona el token? ¿entran eventos?
 ```
 
-- **Splunk:** http://localhost:8000 (`admin` / la contraseña del `.env`)
+- **Splunk:** http://localhost:8000 (`admin` / `SPLUNK_PASSWORD` del `.env`, generada en el primer `make up`)
 - **Tu servicio:** http://localhost:8080
 - **Tu dashboard:** http://localhost:8081/dashboard.html (después de `make ver`)
 
@@ -105,7 +106,7 @@ olvidan: no detectan ataques, detectan que **has dejado de poder detectarlos**
 regla que vigila que las demás reglas no se estén saltando ejecuciones.
 
 ```bash
-make reglas                                   # las 21, con su estado
+make reglas                                   # las 21, activas y desactivadas
 make probar R='DET-WEB-001 Escaneo de rutas'  # lanzar una ahora, con sus acciones
 make alertas                                  # qué ha disparado en 24 h
 ```
@@ -143,7 +144,7 @@ Copia este bloque al servicio de tu propio `docker-compose.yml`:
       driver: splunk
       options:
         splunk-url: "https://localhost:8088"
-        splunk-token: "11112222-3333-4444-5555-666677778888"
+        splunk-token: "${HEC_TOKEN}"
         splunk-index: "mi_servicio"
         splunk-sourcetype: "mi_servicio:docker"
         splunk-insecureskipverify: "true"
