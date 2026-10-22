@@ -200,6 +200,18 @@ make reset       # BORRA los datos indexados y empieza de cero
 
 ---
 
+## Cómo está probado
+
+Lo que se ha comprobado en este repositorio, y lo que no:
+
+| Qué | Cómo | Estado |
+|---|---|---|
+| Configuración de nginx (las dos variantes) | `nginx -t` | ✔ |
+| `X-Forwarded-For` → IP real en el log, y `/login` → 401 | nginx local con peticiones de `make ataque` | ✔ |
+| Puertos solo en `127.0.0.1` | `docker compose config` | ✔ |
+| Contraseña y token aleatorios, sin tocar los que pongas tú | `scripts/generar-secretos.sh` en un directorio limpio | ✔ |
+| Que las 11 reglas activas salten en Splunk | levantar el lab, `make ataque` y `make alertas` | pendiente de documentar la ejecución |
+
 ## Requisitos
 
 Splunk pide 6 GB de RAM para ir cómodo y no arranca bien por debajo de 4. El
