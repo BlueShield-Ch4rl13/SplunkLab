@@ -502,7 +502,9 @@ SPLUNK_TOKEN=eyJraWQiOi... python3 exportar.py
 make ver
 ```
 
-y abres `http://192.168.1.50:8081/dashboard.html` desde tu PC.
+y abres `http://192.168.1.50:8081/dashboard.html` desde tu PC. El dashboard escucha en
+la misma IP que Splunk (`SPLUNK_BIND` del `.env`): con el valor por defecto, `127.0.0.1`,
+solo se ve desde la propia VM, porque lleva dentro los logs del laboratorio.
 
 O sin servidor: `make exportar` y te llevas `salida/dashboard.html` a donde
 quieras. **Los datos van incrustados dentro del fichero**, así que funciona sin

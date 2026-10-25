@@ -5,6 +5,7 @@ SHELL := /bin/bash
 COMPOSE := docker compose
 CLAVE = $(shell grep -E "^SPLUNK_PASSWORD=" .env 2>/dev/null | cut -d= -f2)
 TOKEN = $(shell grep -E "^HEC_TOKEN=" .env 2>/dev/null | cut -d= -f2)
+BIND  = $(shell grep -E "^SPLUNK_BIND=" .env 2>/dev/null | cut -d= -f2)
 
 # Para meter el nombre de una regla (lleva espacios) en una URL: espacio -> %20
 empty :=
@@ -109,8 +110,8 @@ alertas:  ## Qué han disparado las reglas en las últimas 24 h (index=mi_alerta
 exportar:  ## Saca los datos a salida/datos.json y salida/dashboard.html
 	SPLUNK_PASSWORD=$(CLAVE) python3 exportar.py
 
-ver:  ## Exporta y sirve el dashboard en http://localhost:8081
-	SPLUNK_PASSWORD=$(CLAVE) python3 exportar.py --servir --cada 60
+ver:  ## Exporta y sirve el dashboard en el puerto 8081 (en SPLUNK_BIND, por defecto solo este equipo)
+	SPLUNK_PASSWORD=$(CLAVE) SPLUNK_BIND=$(BIND) python3 exportar.py --servir --cada 60
 
 json:  ## Exporta y vuelca salida/datos.json por consola
 	@SPLUNK_PASSWORD=$(CLAVE) python3 exportar.py >/dev/null
