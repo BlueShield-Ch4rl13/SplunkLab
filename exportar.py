@@ -346,9 +346,13 @@ def servir(puerto):
     os.makedirs(SALIDA, exist_ok=True)
     manejador = partial(SimpleHTTPRequestHandler, directory=SALIDA)
     manejador.log_message = lambda *a, **k: None
-    srv = ThreadingHTTPServer(("0.0.0.0", puerto), manejador)
+    # Misma IP que los puertos de Splunk (SPLUNK_BIND en .env): por defecto solo
+    # este equipo. El dashboard lleva dentro los logs del laboratorio; con
+    # SPLUNK_BIND=0.0.0.0 se ve desde otro PC de tu red (Parte 9 del manual).
+    ip = os.environ.get("SPLUNK_BIND") or "127.0.0.1"
+    srv = ThreadingHTTPServer((ip, puerto), manejador)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
-    log(f"sirviendo en http://localhost:{puerto}/dashboard.html")
+    log(f"sirviendo en http://{'localhost' if ip == '127.0.0.1' else ip}:{puerto}/dashboard.html")
 
 
 def main():
