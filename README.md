@@ -220,3 +220,10 @@ sola; `make estado` te dice cuándo pasa a `healthy`.
 
 Probado con `splunk/splunk:latest` (Splunk Enterprise 10) y el plugin
 `docker compose` v2.
+
+En cada cambio, la CI valida los dos `docker-compose` con secretos de ejemplo,
+pasa `shellcheck` a los scripts y `ruff` al Python (`.github/workflows/ci.yml`).
+
+## Licencia
+
+MIT — ver [`LICENSE`](LICENSE).
