@@ -1,0 +1,45 @@
+name: CI
+
+# Comprueba lo que se puede comprobar sin levantar Splunk de verdad:
+#  - que los dos docker-compose son válidos y se resuelven con secretos de ejemplo
+#  - que los scripts de shell no tienen errores de bash (shellcheck)
+#  - que el Python no tiene fallos de sintaxis ni nombres sin definir (ruff)
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      # docker compose ya viene en los runners de GitHub. Los secretos son de
+      # mentira: config solo interpola variables, no arranca ningún contenedor.
+      - name: Validar docker-compose
+        env:
+          SPLUNK_PASSWORD: ci-solo-para-validar
+          HEC_TOKEN: ci
+        run: |
+          docker compose -f docker-compose.yml config -q
+          docker compose -f docker-compose.yml -f docker-compose.ficheros.yml config -q
+
+      - name: Shellcheck
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          shellcheck -S warning scripts/*.sh
+
+      - name: Ruff (errores de sintaxis y nombres)
+        run: |
+          pipx install ruff
+          ruff check --select E9,F63,F7,F82 .
