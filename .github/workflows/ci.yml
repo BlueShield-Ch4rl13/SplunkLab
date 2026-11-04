@@ -31,6 +31,13 @@ jobs:
           SPLUNK_PASSWORD: ci-solo-para-validar
           HEC_TOKEN: ci
         run: |
+          # La versión de Splunk sale del .env.example (sin valor por defecto en el compose)
+          export SPLUNK_TAG="$(grep -E '^SPLUNK_TAG=' .env.example | cut -d= -f2)"
+          echo "SPLUNK_TAG=$SPLUNK_TAG"
+          # Ninguna 10.0.x con fallos críticos conocidos (CVE-2026-20253 y avisos de octubre de 2026)
+          if [[ "$SPLUNK_TAG" =~ ^10\.0\.([0-9]+)$ ]] && (( BASH_REMATCH[1] < 12 )); then
+            echo "::error file=.env.example::SPLUNK_TAG=$SPLUNK_TAG tiene fallos críticos publicados"; exit 1
+          fi
           docker compose -f docker-compose.yml config -q
           docker compose -f docker-compose.yml -f docker-compose.ficheros.yml config -q
 

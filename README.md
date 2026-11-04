@@ -218,8 +218,9 @@ Splunk pide 6 GB de RAM para ir cómodo y no arranca bien por debajo de 4. El
 primer arranque tarda entre uno y tres minutos mientras la imagen se aprovisiona
 sola; `make estado` te dice cuándo pasa a `healthy`.
 
-Probado con `splunk/splunk:latest` (Splunk Enterprise 10) y el plugin
-`docker compose` v2.
+Probado con Splunk Enterprise 10.0 (`SPLUNK_TAG` en `.env`, fijada a 10.0.12) y el
+plugin `docker compose` v2. `make up` sube sola una 10.0.x anterior con fallos
+conocidos.
 
 En cada cambio, la CI valida los dos `docker-compose` con secretos de ejemplo,
 pasa `shellcheck` a los scripts y `ruff` al Python (`.github/workflows/ci.yml`).

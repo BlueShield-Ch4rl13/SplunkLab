@@ -18,6 +18,7 @@ No necesita instalar nada: solo la librería estándar de Python 3.
 """
 
 import argparse
+import ipaddress
 import csv
 import io
 import json
@@ -134,11 +135,45 @@ SALIDA = os.environ.get("SALIDA", os.path.join(os.path.dirname(os.path.abspath(_
 PLANTILLA = os.environ.get("PLANTILLA",
                            os.path.join(os.path.dirname(os.path.abspath(__file__)), "plantilla.html"))
 
-# El certificado de Splunk es autofirmado. En el laboratorio no se valida;
-# en producción se despliega la CA y se quita esto.
-_ctx = ssl.create_default_context()
-_ctx.check_hostname = False
-_ctx.verify_mode = ssl.CERT_NONE
+
+def _es_local(host: str) -> bool:
+    """localhost o una IP de loopback: ahí nadie se puede poner en medio."""
+    if (host or "").lower() in ("localhost", "localhost.localdomain"):
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def contexto_tls(api: str) -> tuple[ssl.SSLContext, str]:
+    """Verificación TLS de la conexión con Splunk, y el modo elegido.
+
+    Por esta conexión va la contraseña de admin o el token, así que se verifica
+    siempre salvo en dos casos:
+      - Splunk en esta misma máquina (localhost o 127.0.0.1, el laboratorio):
+        el certificado es autofirmado y en loopback no hay nadie en medio.
+      - SPLUNK_INSECURE_TLS=1, a sabiendas.
+    SPLUNK_CA=/ruta/ca.pem verifica contra esa CA (la de $SPLUNK_HOME/etc/auth/
+    o la de tu empresa), y entonces se verifica también en local.
+    """
+    ca = os.environ.get("SPLUNK_CA", "").strip()
+    ctx = ssl.create_default_context(cafile=ca or None)
+    if ca:
+        return ctx, f"verificado con {ca}"
+    host = urllib.parse.urlsplit(api).hostname or ""
+    if os.environ.get("SPLUNK_INSECURE_TLS") == "1":
+        modo = "SIN verificar (SPLUNK_INSECURE_TLS=1)"
+    elif _es_local(host):
+        modo = "sin verificar: Splunk en esta máquina (loopback)"
+    else:
+        return ctx, "verificado con las CA del sistema"
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    return ctx, modo
+
+
+_ctx, MODO_TLS = contexto_tls(API)
 
 
 class ErrorSplunk(Exception):
@@ -368,7 +403,7 @@ def main():
 
     while True:
         try:
-            log(f"consultando {API} ...")
+            log(f"consultando {API} (TLS {MODO_TLS}) ...")
             exportar_una_vez()
         except ErrorSplunk as exc:
             log(f"ERROR: {exc}")

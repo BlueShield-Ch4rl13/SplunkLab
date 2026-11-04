@@ -37,7 +37,7 @@ services:
   # indexador con lo que hayas puesto en props.conf.
   # ---------------------------------------------------------------------------
   universalforwarder:
-    image: splunk/universalforwarder:${SPLUNK_TAG:-latest}
+    image: splunk/universalforwarder:${SPLUNK_TAG:?falta SPLUNK_TAG en el fichero .env (make up la pone)}
     container_name: forwarder
     hostname: forwarder
     restart: unless-stopped
