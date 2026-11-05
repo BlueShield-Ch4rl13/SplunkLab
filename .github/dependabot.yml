@@ -1,0 +1,9 @@
+# Cada semana: las acciones de GitHub, que van fijadas por SHA.
+# Splunk va por SPLUNK_TAG en .env.example y Dependabot no ve variables: el
+# resumen semanal de Discord avisa cuando sale una 10.0.x nueva.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: {interval: weekly}
+    groups: {acciones: {patterns: ["*"]}}
