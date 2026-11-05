@@ -25,7 +25,8 @@ services:
   # SPLUNK. Nada más: ni forwarder ni apps de terceros.
   # ---------------------------------------------------------------------------
   splunk:
-    image: splunk/splunk:${SPLUNK_TAG:-latest}
+    # Sin valor por defecto: "latest" podía saltar de versión mayor o a una con fallos
+    image: splunk/splunk:${SPLUNK_TAG:?falta SPLUNK_TAG en el fichero .env (make up la pone)}
     container_name: splunk
     hostname: splunk
     restart: unless-stopped
@@ -98,6 +99,16 @@ services:
         splunk-gzip: "true"
         # El nombre del contenedor viaja como "tag": así sabes de quién es cada log.
         tag: "{{.Name}}"
+
+# Subred fija para la red del laboratorio: nginx solo cree X-Forwarded-For si
+# llega de su puerta de enlace (172.31.250.1, el propio equipo). Si choca con una
+# red tuya, cambia la subred aqui y la IP en nginx/*.conf (set_real_ip_from).
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.31.250.0/24
+          gateway: 172.31.250.1
 
 volumes:
   splunk-var:

@@ -559,7 +559,8 @@ docker run --rm -v splunk-inicio_splunk-var:/datos -v "$PWD":/copia alpine \
 ```
 
 **Actualizar Splunk.** Cambia `SPLUNK_TAG` en el `.env` a la versión que
-quieras y:
+quieras (las de la rama 10.0 anteriores a 10.0.12 tienen fallos críticos
+publicados; `make up` las sube sola) y:
 
 ```bash
 docker compose pull && docker compose up -d
@@ -588,6 +589,11 @@ servidor de verdad, en orden de importancia:
 por eso vas poniendo `-k` y `splunk-insecureskipverify: "true"` por todas
 partes. En producción se despliega el certificado de tu CA en Splunk y se quita
 ese `insecureskipverify`: si no, cualquiera en la red puede ponerse en medio.
+`exportar.py` ya lo hace así: solo deja de verificar si Splunk está en esta misma
+máquina (`localhost`); contra otra máquina verifica siempre, con las CA del
+sistema o con la que le indiques en `SPLUNK_CA=/ruta/ca.pem`. Para un Splunk de
+prueba con certificado autofirmado en otra máquina, `SPLUNK_INSECURE_TLS=1`, a
+sabiendas.
 
 **2. Nada de la contraseña de admin en ficheros.** Se crea un usuario de
 servicio con un rol recortado (solo búsqueda sobre el índice que necesita) y se

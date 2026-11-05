@@ -80,6 +80,14 @@ if [[ -f .env ]]; then
   (( ${#CLAVE} >= 8 )) && ok "la contraseña tiene ${#CLAVE} caracteres" \
                        || mal "SPLUNK_PASSWORD debe tener 8 caracteres o más"
   TOKEN_CONF=$(grep -sE '^token *=' splunk/apps/mi_indice/local/inputs.conf | head -1 | cut -d= -f2- | tr -d ' ')
+  VERSION=$(grep -E '^SPLUNK_TAG=' .env | cut -d= -f2-)
+  if [[ "$VERSION" =~ ^10\.0\.([0-9]+)$ ]] && (( BASH_REMATCH[1] < 12 )); then
+    mal "SPLUNK_TAG=$VERSION tiene fallos críticos conocidos (CVE-2026-20253): ejecuta ./scripts/generar-secretos.sh"
+  elif [[ -z "$VERSION" || "$VERSION" == "latest" ]]; then
+    mal "SPLUNK_TAG no está fijada: ejecuta ./scripts/generar-secretos.sh"
+  else
+    ok "SPLUNK_TAG=$VERSION"
+  fi
   if [[ "$TOKEN_ENV" == "11112222-3333-4444-5555-666677778888" ]]; then
     mal "HEC_TOKEN es el token de ejemplo que estuvo publicado: ejecuta ./scripts/generar-secretos.sh"
   elif [[ -n "$TOKEN_ENV" && "$TOKEN_ENV" == "$TOKEN_CONF" ]]; then

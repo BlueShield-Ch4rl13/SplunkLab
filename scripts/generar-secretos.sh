@@ -75,3 +75,16 @@ sourcetype = mi_servicio:docker
 description = Logs del servicio de docker-compose
 EOF
 chmod 644 "$LOCAL_INPUTS"   # lo lee el usuario splunk del contenedor
+
+# Versión de Splunk: un .env creado antes puede tener una 10.0.x con fallos
+# críticos (CVE-2026-20253 afecta a 10.0.0-10.0.6 y está en el catálogo KEV de
+# CISA). Dentro de la misma rama 10.0 la subida es de parche: no migra índices.
+VERSION_SEGURA="10.0.12"
+version="$(leer SPLUNK_TAG)"
+if [[ -z "$version" || "$version" == "latest" ]]; then
+  poner SPLUNK_TAG "$VERSION_SEGURA"
+  echo "  SPLUNK_TAG fijada a $VERSION_SEGURA (estaba vacía o en latest)"
+elif [[ "$version" =~ ^10\.0\.([0-9]+)$ ]] && (( BASH_REMATCH[1] < 12 )); then
+  poner SPLUNK_TAG "$VERSION_SEGURA"
+  echo "  SPLUNK_TAG subida de $version a $VERSION_SEGURA (parche de seguridad de la misma rama)"
+fi
